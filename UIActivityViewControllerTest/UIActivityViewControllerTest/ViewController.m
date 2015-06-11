@@ -8,34 +8,60 @@
 
 #import "ViewController.h"
 
+#define LOG_ENUM_CASE(x) case x: NSLog(@#x); break;
+
 @interface ViewController () <UITableViewDataSource, UITableViewDelegate>
+
+@property (nonatomic, strong) UIViewController* viewController;
 
 @end
 
 @implementation ViewController
 
+void runLoopObserverCallBack(CFRunLoopObserverRef observer, CFRunLoopActivity activity, void *info) {
+    switch (activity) {
+        LOG_ENUM_CASE(kCFRunLoopEntry)
+        LOG_ENUM_CASE(kCFRunLoopBeforeTimers)
+        LOG_ENUM_CASE(kCFRunLoopBeforeSources)
+        LOG_ENUM_CASE(kCFRunLoopBeforeWaiting)
+        LOG_ENUM_CASE(kCFRunLoopAfterWaiting)
+        LOG_ENUM_CASE(kCFRunLoopExit)
+            
+        default:
+            NSLog(@"Unhandled activity: %d", (int)activity);
+            abort();
+    }
+}
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+    CFRunLoopObserverRef observer = CFRunLoopObserverCreate(NULL, kCFRunLoopAllActivities, YES, 0, runLoopObserverCallBack, NULL);
+    CFRunLoopAddObserver(CFRunLoopGetCurrent(), observer, kCFRunLoopCommonModes);
+    CFRelease(observer);
+    
+    self.viewController = [UIViewController new];
+    self.viewController.view.backgroundColor = [UIColor redColor];
+    UITapGestureRecognizer* tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissViewController)];
+    [self.viewController.view addGestureRecognizer:tapGestureRecognizer];
+}
+
+- (void)dismissViewController {
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 3;
+    return 2;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    switch (section) {
-        case 0: return 1;
-            
-        case 1:
-        case 2: return 3;
-            
-        default:
-            NSAssert(NO, @"Unhandled section: %d", (int)section);
-            return 0;
-    }
+    return 1;
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
     switch (section) {
-        case 0: return @"showViewController:sender:";
-        case 1: return @"presentViewController:animated:completion:";
-        case 2: return @"presentViewController:animated:completion: + dispatch ^{} to main queue";
+        case 0: return @"presentViewController:animated:completion:";
+        case 1: return @"presentViewController:animated:completion: + CFRunLoopWakeUp";
             
         default:
             NSAssert(NO, @"Unhandled section: %d", (int)section);
@@ -46,76 +72,31 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell* cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
-    
-    switch (indexPath.row) {
-        case 0:
-            cell.textLabel.text = @"UIViewController";
-            break;
-        case 1:
-            cell.textLabel.text = @"UIActivityViewController";
-            break;
-        case 2:
-            cell.textLabel.text = @"UIAlertController";
-            break;
-        default:
-            NSAssert(NO, @"Unhandled row: %@", indexPath);
-            break;
-    }
-    
+    cell.textLabel.text = @"present";
     return cell;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    UIViewController* viewController = [self viewControllerForRow:indexPath.row];
     switch (indexPath.section) {
         case 0:
-            [self showViewController:viewController sender:self];
+            NSLog(@"calling present");
+            [self presentViewController:self.viewController animated:YES completion:nil];
+            NSLog(@"called present");
             break;
-            
+
         case 1:
-            [self presentViewController:viewController animated:YES completion:nil];
-            break;
+            NSLog(@"calling present");
+            [self presentViewController:self.viewController animated:YES completion:nil];
+            NSLog(@"called present");
             
-        case 2:
-            [self presentViewController:viewController animated:YES completion:nil];
-            dispatch_async(dispatch_get_main_queue(), ^{});
+            NSLog(@"calling CFRunLoopWakeUp");
+            CFRunLoopWakeUp(CFRunLoopGetCurrent());
+            NSLog(@"called CFRunLoopWakeUp");
             break;
             
         default:
             break;
     }
-}
-
-- (UIViewController*)viewControllerForRow:(NSInteger)row {
-    switch (row) {
-        case 0: {
-            UIViewController* viewController = [UIViewController new];
-            viewController.view.backgroundColor = [UIColor redColor];
-            UITapGestureRecognizer* tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissViewController)];
-            [viewController.view addGestureRecognizer:tapGestureRecognizer];
-            return viewController;
-        } break;
-            
-        case 1: {
-            return [[UIActivityViewController alloc] initWithActivityItems:@[] applicationActivities:nil];
-        } break;
-            
-        case 2: {
-            UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"This is an alert" message:@"This is shown properly" preferredStyle:UIAlertControllerStyleActionSheet];
-            [alert addAction:[UIAlertAction actionWithTitle:@"Dismiss" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
-                [self dismissViewController];
-            }]];
-            return alert;
-        } break;
-            
-        default:
-            NSAssert(NO, @"Unhandled row: %d", (int)row);
-            return nil;
-    }
-}
-
-- (void)dismissViewController {
-    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 @end
