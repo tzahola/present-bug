@@ -15,6 +15,7 @@ Usage:
    2015-06-11 18:25:00.010 UIActivityViewControllerTest[526:45580] kCFRunLoopBeforeWaiting
 ```
    The last line should be `kCFRunLoopBeforeWaiting`
+
 3. Tap on the first row; this calls `presentViewController:animated:completion` to present a completely blank view controller w/ red background
 4. Notice how the red view controller failed to appear
 5. Tap anywhere on the screen, or shake the device, or wait until the clock on the status bar updates: the view controller should appear now
