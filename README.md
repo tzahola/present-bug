@@ -1,4 +1,4 @@
-# present-bug
+# presentViewController:animated:completion: bug
 Demonstration project of a bug in UIViewController presentViewController:animated:completion: on iOS 8.3. 
 
 Usage:
@@ -24,3 +24,8 @@ Usage:
 * Notice how this time, no matter what the main runloop's state was, the view controller was presented correctly. 
 
 Rdar: http://openradar.appspot.com/19563577
+
+Other people encountering the same issue: 
+http://stackoverflow.com/questions/21075540/presentviewcontrolleranimatedyes-view-will-not-appear-until-user-taps-again/
+http://stackoverflow.com/questions/20320591/uitableview-and-presentviewcontroller-takes-2-clicks-to-display
+https://devforums.apple.com/thread/201431
