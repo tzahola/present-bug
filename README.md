@@ -5,7 +5,7 @@ Usage:
 
 1. Start the app on a device with iOS 8.3 (iOS 8.1 also works, haven't tried w/ older versions)
 2. Wait until the app stops producing `kCFRunLoop ...` log lines (i.e. the main runloop goes to sleep):
-   ```objc
+```objc
    ... more lines
    2015-06-11 18:24:51.214 UIActivityViewControllerTest[526:45580] kCFRunLoopBeforeSources
    2015-06-11 18:24:51.214 UIActivityViewControllerTest[526:45580] kCFRunLoopBeforeWaiting
@@ -13,7 +13,7 @@ Usage:
    2015-06-11 18:25:00.008 UIActivityViewControllerTest[526:45580] kCFRunLoopBeforeTimers
    2015-06-11 18:25:00.009 UIActivityViewControllerTest[526:45580] kCFRunLoopBeforeSources
    2015-06-11 18:25:00.010 UIActivityViewControllerTest[526:45580] kCFRunLoopBeforeWaiting
-   ```
+```
    The last line should be `kCFRunLoopBeforeWaiting`
 3. Tap on the first row; this calls `presentViewController:animated:completion` to present a completely blank view controller w/ red background
 4. Notice how the red view controller failed to appear
