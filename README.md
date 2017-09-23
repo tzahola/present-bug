@@ -1,9 +1,11 @@
 # presentViewController:animated:completion: bug
+*2017-09-23 Update: the bug still persists in iOS 11.0 (15A372)*
+
 Demonstration project of a bug in UIViewController presentViewController:animated:completion: on iOS 8.3. 
 
 Usage:
 
-* Start the app on a device with iOS 8.3 (iOS 8.1 also works, haven't tried w/ older versions)
+* Start the app on a device with iOS ~8.3~ 11.0 (iOS 8.1 also works, haven't tried w/ older versions)
 * Wait until the app stops producing `kCFRunLoop ...` log lines (i.e. the main runloop goes to sleep):
 ```objc
    ... more lines
