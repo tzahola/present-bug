@@ -1,5 +1,6 @@
 # presentViewController:animated:completion: bug
 *2017-09-23 Update: the bug still persists in iOS 11.0 (15A372)*
+*2019-05-26 Update: the bug still persists in iOS 12.2 (16E227)*
 
 Demonstration project of a bug in UIViewController presentViewController:animated:completion: on iOS 8.3. 
 
